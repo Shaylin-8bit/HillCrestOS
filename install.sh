@@ -12,20 +12,21 @@ SWAPSIZE=0
 #
 ###########################################
 
+if [ "${1}" != "-p" ]; then
 
-pacman -Sy
-pacman -S reflector --noconfirm
-echo "Updating mirrors..."
-reflector --country "US" --sort rate -n 12 -l 12 --save /etc/pacman.d/mirrorlist
-pacman -S dialog --noconfirm
+  pacman -Sy
+  pacman -S reflector --noconfirm
+  echo "Updating mirrors..."
+  reflector --country "US" --sort rate -n 12 -l 12 --save /etc/pacman.d/mirrorlist
+  pacman -S dialog --noconfirm
 
+fi
 
 ###########################################
 #
 #  COLLECT USER INPUT  
 #
 ###########################################
-
 
 # Collect user information
 NAME=$(dialog --stdout --title "${OSNAME}" --inputbox "Enter your username" 5 40)
@@ -118,7 +119,7 @@ PARTION_SCHEME="${PARTION_SCHEME}start= , size= , type=linux"
 echo -e "${PARTION_SCHEME}" >> disk.txt
 
 # write to disk
-sfdisk $DISK < disk.txt
+sfdisk --force $DISK < disk.txt
 
 # delete temp file
 rm disk.txt
@@ -147,7 +148,7 @@ if [ $SWAPSIZE -gt 0 ]; then
   # PARTION 3!!
   ROOT_PART=$(ls $DISK* | grep -E "^${DISK}?p3" | cat)
   wipefs "${ROOT_PART}"
-  mkfs.ext4 "${ROOT_PART}"
+  mkfs -F -t ext4 "${ROOT_PART}"
   
   # Is separate home was requested
   # PARTION 4!!
@@ -155,7 +156,7 @@ if [ $SWAPSIZE -gt 0 ]; then
     # Get home path, wipe old file system, make ext4 file system
     HOME_PART=$(ls $DISK* | grep -E "^${DISK}?p4" | cat)
     wipefs "${HOME_PART}"
-    mkfs.ext4 "${HOME_PART}"
+    mkfs -F -t ext4 "${HOME_PART}"
   fi
 
 # If swap was not requested
@@ -164,7 +165,7 @@ else
   # Partion 2!!
   ROOT_PART=$(ls $DISK* | grep -E "^${DISK}?p2" | cat)
   wipefs "${ROOT_PART}"
-  mkfs.ext4 "${ROOT_PART}"
+  mkfs -F -t ext4 "${ROOT_PART}"
 
   # If separate home partion requested
   if [ $ROOTSIZE -gt 0 ]; then
@@ -172,7 +173,7 @@ else
     # Partion 3!!
     HOME_PART=$(ls $DISK* | grep -E "^${DISK}?p3" | cat)
     wipefs "${HOME_PART}"
-    mkfs.ext4 "${HOME_PART}"
+    mkfs -F -t ext4 "${HOME_PART}"
   fi
 fi
 
@@ -180,7 +181,7 @@ fi
 # PARTION 1!!
 BOOT_PART=$(ls $DISK* | grep -E "^${DISK}?p1" | cat)
 wipefs "${BOOT_PART}"
-mkfs.fat -F32 "${BOOT_PART}"
+mkfs -F -t fat -F 32 "${BOOT_PART}"
 
 
 ###########################################
