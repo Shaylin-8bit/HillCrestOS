@@ -8,6 +8,19 @@ SWAPSIZE=0
 
 ###########################################
 #
+#  CONFIGURE PACMAN
+#
+###########################################
+
+
+pacman -Sy
+pacman -S reflector --noconfirm
+reflector --country "US" --sort rate -n 12 -l 12 --save /etc/pacman.d/mirrorlist
+pacman -S dialog --noconfirm
+
+
+###########################################
+#
 #  COLLECT USER INPUT  
 #
 ###########################################
