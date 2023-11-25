@@ -15,6 +15,7 @@ SWAPSIZE=0
 
 pacman -Sy
 pacman -S reflector --noconfirm
+echo "Updating mirrors..."
 reflector --country "US" --sort rate -n 12 -l 12 --save /etc/pacman.d/mirrorlist
 pacman -S dialog --noconfirm
 
@@ -139,22 +140,22 @@ if [ $SWAPSIZE -gt 0 ]; then
   # get swap path, wipe old file system, make swap file system, turn on swap
   # PARTION 2!!
   SWAP_PART=$(ls $DISK* | grep -E "^${DISK}?p2" | cat)
-  wipefs $SWAP_PART
-  mkswap $SWAP_PART
+  wipefs "${SWAP_PART}"
+  mkswap "${SWAP_PART}"
 
   # Get root path, wipe old file system, make ext4 file system
   # PARTION 3!!
   ROOT_PART=$(ls $DISK* | grep -E "^${DISK}?p3" | cat)
-  wipefs $ROOT_PART
-  mkfs.ext4 $ROOT_PART
+  wipefs "${ROOT_PART}"
+  mkfs.ext4 "${ROOT_PART}"
   
   # Is separate home was requested
   # PARTION 4!!
   if [ $ROOTSIZE -gt 0 ]; then
     # Get home path, wipe old file system, make ext4 file system
     HOME_PART=$(ls $DISK* | grep -E "^${DISK}?p4" | cat)
-    wipefs $HOME_PART
-    mkfs.ext4 $HOME_PART  
+    wipefs "${HOME_PART}"
+    mkfs.ext4 "${HOME_PART}"
   fi
 
 # If swap was not requested
@@ -162,24 +163,24 @@ else
   # Get root path, wipe old file system, create new file system
   # Partion 2!!
   ROOT_PART=$(ls $DISK* | grep -E "^${DISK}?p2" | cat)
-  wipefs $ROOT_PART
-  mkfs.ext4 $ROOT_PART
+  wipefs "${ROOT_PART}"
+  mkfs.ext4 "${ROOT_PART}"
 
   # If separate home partion requested
   if [ $ROOTSIZE -gt 0 ]; then
     # Get home path, wipe old file system, create new file system
     # Partion 3!!
     HOME_PART=$(ls $DISK* | grep -E "^${DISK}?p3" | cat)
-    wipefs $HOME_PART
-    mkfs.ext4 $HOME_PART  
+    wipefs "${HOME_PART}"
+    mkfs.ext4 "${HOME_PART}"
   fi
 fi
 
 # get boot partion path, wipe old file system, create FAT32 file system
 # PARTION 1!!
 BOOT_PART=$(ls $DISK* | grep -E "^${DISK}?p1" | cat)
-wipefs $BOOT_PART
-mkfs.fat -F32 $BOOT_PART
+wipefs "${BOOT_PART}"
+mkfs.fat -F32 "${BOOT_PART}"
 
 
 ###########################################
