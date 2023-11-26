@@ -206,3 +206,17 @@ fi
 
 # mount swap partition
 swapon "${SWAP_PART}"
+
+pacstrap /mnt sudo nano linux linux-firmware base base-devel
+genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+
+bootctl install
+
+touch /boot/loader/loader.conf
+truncate -s 0 /boot/loader/loader.conf
+echo -e "default hillcrest\ntimeout 3\nconsole-mode keep\neditor 0" >> /boot/loader/loader.conf
+
+touch /boot/loader/entries/hillcrest.conf
+truncate -s 0 /boot/loader/entries/hillcrest.conf
+echo -e "title HillCrest OS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=PARTUUID=$(blkid "${ROOT_PART}" -s PARTUUID -o value) rw"
