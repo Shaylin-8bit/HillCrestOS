@@ -5,6 +5,8 @@ OSNAME="HillCrest OS"
 ROOTSIZE=0
 SWAPSIZE=0
 
+timedatectl set-ntp true
+
 
 ###########################################
 #
@@ -227,3 +229,18 @@ touch /mnt/boot/loader/entries/hillcrest.conf
 truncate -s 0 /mnt/boot/loader/entries/hillcrest.conf
 echo -e "title HillCrest OS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=PARTUUID=$(blkid ${ROOT_PART} -s PARTUUID -o value) rw" >> /mnt/boot/loader/entries/hillcrest.conf
 
+
+
+###########################################
+#
+#  POST INSTALLATION
+#
+###########################################
+
+
+echo $HOSTNAME >> /mnt/etc/hostname
+echo "LANG=en_US.UTF-8" >> /mnt/etc/locale.conf
+arch-chroot /mnt useradd -m -g wheel,audio,video $USERNAME
+echo "root:${PASSWORD}" | chpasswd --root /mnt
+echo "${USERNAME}:${PASSWORD}" | chpasswd --root /mnt
+arch-chroot systemctl enable Network-Manager.service
