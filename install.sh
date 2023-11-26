@@ -215,7 +215,7 @@ swapon "${SWAP_PART}"
 ###########################################
 
 
-pacstrap /mnt sudo nano linux linux-firmware base base-devel
+pacstrap /mnt sudo nano linux linux-firmware base base-devel networkmanager
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt bootctl install
 
