@@ -207,16 +207,23 @@ fi
 # mount swap partition
 swapon "${SWAP_PART}"
 
+
+###########################################
+#
+#  INSTALL BOOT LOADER
+#
+###########################################
+
+
 pacstrap /mnt sudo nano linux linux-firmware base base-devel
 genfstab -U /mnt >> /mnt/etc/fstab
-arch-chroot /mnt
+arch-chroot /mnt bootctl install
 
-bootctl install
+touch /mnt/boot/loader/loader.conf
+truncate -s 0 /mnt/boot/loader/loader.conf
+echo -e "default hillcrest\ntimeout 3\nconsole-mode keep\neditor 0" >> /mnt/boot/loader/loader.conf
 
-touch /boot/loader/loader.conf
-truncate -s 0 /boot/loader/loader.conf
-echo -e "default hillcrest\ntimeout 3\nconsole-mode keep\neditor 0" >> /boot/loader/loader.conf
+touch /mnt/boot/loader/entries/hillcrest.conf
+truncate -s 0 /mnt/boot/loader/entries/hillcrest.conf
+echo -e "title HillCrest OS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=PARTUUID=$(blkid "${ROOT_PART}" -s PARTUUID -o value) rw" >> "/mnt/boot/loader/entries/hillcrest.conf
 
-touch /boot/loader/entries/hillcrest.conf
-truncate -s 0 /boot/loader/entries/hillcrest.conf
-echo -e "title HillCrest OS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=PARTUUID=$(blkid "${ROOT_PART}" -s PARTUUID -o value) rw"
