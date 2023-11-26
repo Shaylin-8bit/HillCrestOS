@@ -225,5 +225,5 @@ echo -e "default hillcrest\ntimeout 3\nconsole-mode keep\neditor 0" >> /mnt/boot
 
 touch /mnt/boot/loader/entries/hillcrest.conf
 truncate -s 0 /mnt/boot/loader/entries/hillcrest.conf
-echo -e "title HillCrest OS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=PARTUUID=$(blkid "${ROOT_PART}" -s PARTUUID -o value) rw" >> "/mnt/boot/loader/entries/hillcrest.conf
+echo -e "title HillCrest OS\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=PARTUUID=$(blkid ${ROOT_PART} -s PARTUUID -o value) rw" >> "/mnt/boot/loader/entries/hillcrest.conf
 
